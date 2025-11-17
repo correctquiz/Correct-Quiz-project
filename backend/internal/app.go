@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"time"
 
 	"CorrectQuiz.com/quiz/internal/collection"
 	"CorrectQuiz.com/quiz/internal/controller"
@@ -145,6 +146,11 @@ func (a *App) setUpDb() {
 	if err != nil {
 		panic("Failed to connect to database!")
 	}
+
+	sqlDB, err := db.DB()
+	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetMaxOpenConns(100)
+	sqlDB.SetConnMaxLifetime(time.Hour)
 
 	db.AutoMigrate(
 		&entity.User{},
