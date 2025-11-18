@@ -10,7 +10,7 @@ export class ApiService {
 
 
     async getQuizById(id: number): Promise<Quiz | null> {
-        let response = await fetch(`/api/quizzes/${id}`, {
+        let response = await fetch(`${BASE_URL}/api/quizzes/${id}`, {
             credentials: 'include'
         });
         if (!response.ok) {
@@ -23,7 +23,7 @@ export class ApiService {
 
 
     async getQuizzes(): Promise<Quiz[]> {
-        let response = await fetch('/api/quizzes', {
+        let response = await fetch('${BASE_URL}/api/quizzes', {
             credentials: 'include'
         });
         if (!response.ok) {
@@ -36,7 +36,7 @@ export class ApiService {
     }
 
     async saveQuiz(quizId: number, quiz: Quiz) {
-        let response = await fetch(`/api/quizzes/${quizId}`, {
+        let response = await fetch(`${BASE_URL}/api/quizzes/${quizId}`, {
             method: "PUT",
             body: JSON.stringify(quiz),
             headers: {
@@ -51,7 +51,7 @@ export class ApiService {
     }
 
     async login(credentials: any): Promise<{ token: string } | null> {
-        const response = await fetch(`/api/auth/login`, {
+        const response = await fetch(`${BASE_URL}/api/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(credentials),
@@ -65,7 +65,7 @@ export class ApiService {
     }
 
     async getEmailForUsername(username: string): Promise<string | null> {
-        const response = await fetch(`/api/users/email/${username}`);
+        const response = await fetch(`${BASE_URL}/api/users/email/${username}`);
 
         if (!response.ok) {
             if (response.status === 404) {
@@ -81,7 +81,7 @@ export class ApiService {
     }
 
     async register(userData: { email: string, username: string, firebaseUid: string, role: string }): Promise<User | null> {
-        const response = await fetch(`/api/auth/register`, {
+        const response = await fetch(`${BASE_URL}/api/auth/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(userData),
@@ -107,7 +107,7 @@ export class ApiService {
     }
 
     async verifyEmailToken(token: string): Promise < any > {
-    const response = await fetch(`/api/auth/verify-email`, {
+    const response = await fetch(`${BASE_URL}/api/auth/verify-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: token }),
@@ -142,7 +142,7 @@ return await response.json();
     }
     
 async resendVerificationEmail(email: string): Promise < any > {
-    const response = await fetch(`/api/auth/resend-verification`, {
+    const response = await fetch(`${BASE_URL}/api/auth/resend-verification`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email }),
@@ -163,7 +163,7 @@ return await response.json();
     }
 
     async deleteQuestion(id: number): Promise < boolean > {
-    const response = await fetch(`/api/questions/${id}`, {
+    const response = await fetch(`${BASE_URL}/api/questions/${id}`, {
         method: 'DELETE',
         credentials: 'include'
     });
@@ -171,7 +171,7 @@ return await response.json();
 }
 
     async createQuiz(name: string): Promise < Quiz | null > {
-    const response = await fetch(`/api/quizzes`, {
+    const response = await fetch(`${BASE_URL}/api/quizzes`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -191,7 +191,7 @@ return await response.json();
     }
 
     async deleteQuiz(id: number): Promise < boolean > {
-    const response = await fetch(`/api/quizzes/${id}`, {
+    const response = await fetch(`${BASE_URL}/api/quizzes/${id}`, {
         method: 'DELETE', credentials: 'include'
     });
     return response.ok;
