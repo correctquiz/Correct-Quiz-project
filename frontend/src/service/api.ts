@@ -5,6 +5,7 @@ interface RegisterError {
 }
 
 export const BASE_URL = (import.meta as any).env.VITE_API_URL || "http://localhost:3000";
+console.log("📢 API URL is:", BASE_URL);
 
 export class ApiService {
 
@@ -93,109 +94,109 @@ export class ApiService {
 
                 const errorData = {
                     response: {
-                        status: response.status, 
+                        status: response.status,
                         data: {
                             error: errorJson.error || "Unknown backend error"
                         }
                     }
                 };
-                throw errorData; 
+                throw errorData;
             }
             return await response.json();
         }
         return await response.json();
     }
 
-    async verifyEmailToken(token: string): Promise < any > {
-    const response = await fetch(`${BASE_URL}/api/auth/verify-email`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: token }),
-    });
+    async verifyEmailToken(token: string): Promise<any> {
+        const response = await fetch(`${BASE_URL}/api/auth/verify-email`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: token }),
+        });
 
-    if(!response.ok) {
-    const errorJson = await response.json();
-    const errorData = {
-        response: {
-            data: {
-                error: errorJson.error || "Unknown verification error"
-            }
+        if (!response.ok) {
+            const errorJson = await response.json();
+            const errorData = {
+                response: {
+                    data: {
+                        error: errorJson.error || "Unknown verification error"
+                    }
+                }
+            };
+            throw errorData;
         }
-    };
-    throw errorData;
-}
 
-return await response.json(); 
+        return await response.json();
     }
 
-    
-    async setInitialClaims(data: { firebaseUid: string; username: string; role: string }): Promise < void> {
-    const response = await fetch(`${BASE_URL}/set-initial-claims`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-    });
-    if(!response.ok) {
-    const errorData = { response: { status: response.status } };
-    throw errorData;
-}
-    }
-    
-async resendVerificationEmail(email: string): Promise < any > {
-    const response = await fetch(`${BASE_URL}/api/auth/resend-verification`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email }),
-    });
 
-    if(!response.ok) {
-    const errorJson = await response.json();
-    const errorData = {
-        response: {
-            data: {
-                error: errorJson.error || "Unknown resend error"
-            }
+    async setInitialClaims(data: { firebaseUid: string; username: string; role: string }): Promise<void> {
+        const response = await fetch(`${BASE_URL}/set-initial-claims`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            const errorData = { response: { status: response.status } };
+            throw errorData;
         }
-    };
-    throw errorData;
-}
-return await response.json();
     }
 
-    async deleteQuestion(id: number): Promise < boolean > {
-    const response = await fetch(`${BASE_URL}/api/questions/${id}`, {
-        method: 'DELETE',
-        credentials: 'include'
-    });
-    return response.ok;
-}
+    async resendVerificationEmail(email: string): Promise<any> {
+        const response = await fetch(`${BASE_URL}/api/auth/resend-verification`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email }),
+        });
 
-    async createQuiz(name: string): Promise < Quiz | null > {
-    const response = await fetch(`${BASE_URL}/api/quizzes`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name: name }),
-        credentials: 'include',
-    });
-    if(!response.ok) {
-    if (response.status === 401) {
-        alert("เซสชันของคุณหมดอายุ กรุณาล็อกอินใหม่อีกครั้ง");
-    } else {
-        alert("สร้างควิซไม่สำเร็จ!");
-    }
-    return null;
-}
-return await response.json();
+        if (!response.ok) {
+            const errorJson = await response.json();
+            const errorData = {
+                response: {
+                    data: {
+                        error: errorJson.error || "Unknown resend error"
+                    }
+                }
+            };
+            throw errorData;
+        }
+        return await response.json();
     }
 
-    async deleteQuiz(id: number): Promise < boolean > {
-    const response = await fetch(`${BASE_URL}/api/quizzes/${id}`, {
-        method: 'DELETE', credentials: 'include'
-    });
-    return response.ok;
-}
+    async deleteQuestion(id: number): Promise<boolean> {
+        const response = await fetch(`${BASE_URL}/api/questions/${id}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+        return response.ok;
+    }
+
+    async createQuiz(name: string): Promise<Quiz | null> {
+        const response = await fetch(`${BASE_URL}/api/quizzes`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: name }),
+            credentials: 'include',
+        });
+        if (!response.ok) {
+            if (response.status === 401) {
+                alert("เซสชันของคุณหมดอายุ กรุณาล็อกอินใหม่อีกครั้ง");
+            } else {
+                alert("สร้างควิซไม่สำเร็จ!");
+            }
+            return null;
+        }
+        return await response.json();
+    }
+
+    async deleteQuiz(id: number): Promise<boolean> {
+        const response = await fetch(`${BASE_URL}/api/quizzes/${id}`, {
+            method: 'DELETE', credentials: 'include'
+        });
+        return response.ok;
+    }
 
 }
 export const apiService = new ApiService();
