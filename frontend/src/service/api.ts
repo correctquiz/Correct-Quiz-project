@@ -4,7 +4,7 @@ interface RegisterError {
     errorStatus: number;
 }
 
-export const BASE_URL = "https://correct-quiz-project.onrender.com";
+export const BASE_URL = (import.meta as any).env.VITE_API_URL || "http://localhost:3000";
 
 export class ApiService {
 
