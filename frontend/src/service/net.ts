@@ -118,7 +118,7 @@ export class NetService {
 
 
     connect() {
-        const WS_URL = (import.meta as any).env.VITE_WS_URL || "ws://localhost:3000/ws";
+        const WS_URL = "wss://correct-quiz-project.onrender.com/ws";
         this.webSocket = new WebSocket(WS_URL);
         this.webSocket.onopen = () => {
             console.log("opened connection");
