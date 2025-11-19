@@ -24,7 +24,7 @@ export class ApiService {
 
 
     async getQuizzes(): Promise<Quiz[]> {
-        let response = await fetch('${BASE_URL}/api/quizzes', {
+        let response = await fetch(`${BASE_URL}/api/quizzes`, {
             credentials: 'include'
         });
         if (!response.ok) {
