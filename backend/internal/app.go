@@ -66,7 +66,7 @@ func (a *App) Init() {
 func (a *App) setUpHttp() {
 	app := fiber.New()
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "https://your-frontend-app.vercel.app, http://localhost:5173",
+		AllowOrigins:     "https://correct-quiz-project-git-main-thuns-projects-ac7c40bb.vercel.app, http://localhost:5173",
 		AllowHeaders:     "Origin, Content-Type, Accept,Authorization",
 		AllowCredentials: true,
 		AllowMethods:     "GET,POST,HEAD,PUT,DELETE,PATCH",
