@@ -77,7 +77,7 @@ func (a *App) setUpHttp() {
 		CookieSecure:   true,
 		CookieSameSite: "None",
 		CookieHTTPOnly: true,
-		CookieDomain:   "",
+		CookieDomain:   "correct-quiz-project.onrender.com",
 	})
 	middleware.Store = store
 
