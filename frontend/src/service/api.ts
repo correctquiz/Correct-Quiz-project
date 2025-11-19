@@ -28,7 +28,7 @@ export class ApiService {
             credentials: 'include'
         });
         if (!response.ok) {
-            alert("Failed to fetch quizzes");
+            alert("Failed to fetch quizzes!");
             return [];
         }
 
