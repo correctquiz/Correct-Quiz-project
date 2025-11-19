@@ -74,7 +74,7 @@ func (a *App) setUpHttp() {
 
 	store := session.New(session.Config{
 		CookieName:     "quiz_session",
-		CookieSecure:   false,
+		CookieSecure:   true,
 		CookieHTTPOnly: true,
 		CookieSameSite: "None",
 		CookieDomain:   "",
