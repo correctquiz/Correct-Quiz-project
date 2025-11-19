@@ -75,8 +75,8 @@ func (a *App) setUpHttp() {
 	store := session.New(session.Config{
 		CookieName:     "quiz_session",
 		CookieSecure:   true,
-		CookieHTTPOnly: true,
 		CookieSameSite: "None",
+		CookieHTTPOnly: true,
 		CookieDomain:   "",
 	})
 	middleware.Store = store
