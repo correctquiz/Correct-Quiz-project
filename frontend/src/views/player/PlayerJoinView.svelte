@@ -3,6 +3,7 @@
     import { userStore, logout } from "../../service/userStore";
     import { playerGameStore } from "../../service/gameStore";
     import { push, querystring } from "svelte-spa-router";
+    import { BASE_URL } from "../../service/api";
 
     let code: string = "";
     let name: string = "";
@@ -73,7 +74,7 @@
 
         try {
             const pinCheckResponse = await fetch(
-                "http://localhost:3000/api/game/check",
+                `${BASE_URL}/api/game/check`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -86,7 +87,7 @@
                 throw new Error("Invalid game PIN");
             }
             const nameCheckResponse = await fetch(
-                "http://localhost:3000/api/game/check-name",
+                `${BASE_URL}/api/game/check-name`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
