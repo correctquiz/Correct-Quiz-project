@@ -116,6 +116,7 @@ func (a *App) setUpHttp() {
 	app.Post("/api/auth/register", authController.Register)
 	app.Post("/api/auth/verify-email", authController.VerifyEmailToken)
 	app.Post("/api/auth/resend-verification", authController.ResendVerificationEmail)
+	app.Post("/api/auth/guest-login", authController.GuestLogin)
 	app.Post("/set-initial-claims", authController.HandleSetInitialClaims)
 	app.Get("/api/games/:gameCode/export/csv", gameController.ExportGameResultsCSV)
 	app.Get("/api/quizzes/:quizId", quizController.GetQuizById)
