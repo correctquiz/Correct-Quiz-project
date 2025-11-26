@@ -11,9 +11,8 @@ var Store *session.Store
 
 func Protected() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		authHeader := c.Get("Authorization")
 		var tokenString string
-
+		authHeader := c.Get("Authorization")
 		if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
 			tokenString = authHeader[7:]
 		} else {
@@ -23,6 +22,8 @@ func Protected() fiber.Handler {
 		if tokenString == "" {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
 		}
+
+		c.Request().Header.SetCookie("quiz_session", tokenString)
 
 		sess, err := Store.Get(c)
 		if err != nil {

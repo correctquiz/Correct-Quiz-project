@@ -60,7 +60,7 @@ export class ApiService {
     async login(credentials: any): Promise<{ token: string } | null> {
         const response = await fetch(`${BASE_URL}/api/auth/login`, {
             method: 'POST',
-            headers: getHeaders(),
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(credentials),
         });
 
