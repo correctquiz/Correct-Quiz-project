@@ -4,6 +4,14 @@ interface RegisterError {
     errorStatus: number;
 }
 
+function getHeaders() {
+    const token = localStorage.getItem("jwt_token");
+    return {
+        'Content-Type': 'application/json',
+        'Authorization': token ? `Bearer ${token}` : '' 
+    };
+}
+
 export const BASE_URL = (import.meta as any).env.VITE_API_URL || "http://localhost:3000";
 console.log("📢 API URL is:", BASE_URL);
 
@@ -12,7 +20,7 @@ export class ApiService {
 
     async getQuizById(id: number): Promise<Quiz | null> {
         let response = await fetch(`${BASE_URL}/api/quizzes/${id}`, {
-            credentials: 'include'
+            headers: getHeaders(),
         });
         if (!response.ok) {
             return null;
@@ -25,7 +33,7 @@ export class ApiService {
 
     async getQuizzes(): Promise<Quiz[]> {
         let response = await fetch(`${BASE_URL}/api/quizzes`, {
-            credentials: 'include'
+            headers: getHeaders(),
         });
         if (!response.ok) {
             alert("Failed to fetch quizzes!");
@@ -40,9 +48,7 @@ export class ApiService {
         let response = await fetch(`${BASE_URL}/api/quizzes/${quizId}`, {
             method: "PUT",
             body: JSON.stringify(quiz),
-            headers: {
-                "Content-Type": "application/json"
-            }, credentials: 'include'
+            headers: getHeaders(),
         });
 
         if (!response.ok) {
@@ -54,9 +60,8 @@ export class ApiService {
     async login(credentials: any): Promise<{ token: string } | null> {
         const response = await fetch(`${BASE_URL}/api/auth/login`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: getHeaders(),
             body: JSON.stringify(credentials),
-            credentials: 'include'
         });
 
         if (!response.ok) {
@@ -167,7 +172,7 @@ export class ApiService {
     async deleteQuestion(id: number): Promise<boolean> {
         const response = await fetch(`${BASE_URL}/api/questions/${id}`, {
             method: 'DELETE',
-            credentials: 'include'
+            headers: getHeaders(),
         });
         return response.ok;
     }
@@ -175,11 +180,8 @@ export class ApiService {
     async createQuiz(name: string): Promise<Quiz | null> {
         const response = await fetch(`${BASE_URL}/api/quizzes`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: getHeaders(),
             body: JSON.stringify({ name: name }),
-            credentials: 'include',
         });
         if (!response.ok) {
             if (response.status === 401) {
@@ -194,7 +196,7 @@ export class ApiService {
 
     async deleteQuiz(id: number): Promise<boolean> {
         const response = await fetch(`${BASE_URL}/api/quizzes/${id}`, {
-            method: 'DELETE', credentials: 'include'
+            method: 'DELETE', headers: getHeaders(),
         });
         return response.ok;
     }
