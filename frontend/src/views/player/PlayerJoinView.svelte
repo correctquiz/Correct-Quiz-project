@@ -73,14 +73,32 @@
         isLoading = true;
 
         try {
-            const pinCheckResponse = await fetch(
-                `${BASE_URL}/api/game/check`,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ code: code }),
-                },
-            );
+            let token = localStorage.getItem("jwt_token");
+
+            if (!token) {
+                const guestResponse = await fetch(
+                    `${BASE_URL}/api/auth/guest-login`,
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ name: name }),
+                    },
+                );
+
+                if (!guestResponse.ok)
+                    throw new Error("Failed to create guest user");
+
+                const guestData = await guestResponse.json();
+                token = guestData.token;
+
+                localStorage.setItem("jwt_token", token);
+            }
+
+            const pinCheckResponse = await fetch(`${BASE_URL}/api/game/check`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ code: code }),
+            });
             if (!pinCheckResponse.ok) {
                 throw new Error("Invalid game PIN");
             } else if (!pinCheckResponse.ok) {

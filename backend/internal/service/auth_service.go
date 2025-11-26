@@ -21,6 +21,7 @@ type AuthServiceInterface interface {
 	Login(ctx context.Context, idToken string) (*entity.User, error)
 	VerifyUserEmailInFirebase(userID uint) error
 	ResendVerification(email string) error
+	GenerateToken(user entity.User) (string, error)
 }
 
 type AuthService struct {
@@ -179,4 +180,8 @@ func (s *AuthService) Login(ctx context.Context, idToken string) (*entity.User, 
 
 func (s *AuthService) GetUserByUsername(username string) (*entity.User, error) {
 	return s.userRepo.GetUserByUsername(username)
+}
+
+func (s *AuthService) GenerateToken(user entity.User) (string, error) {
+	return "mock_guest_token_" + user.Username, nil
 }

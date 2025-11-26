@@ -53,6 +53,10 @@ type LoginRequest struct {
 	IdToken string `json:"idToken"`
 }
 
+type GuestLoginRequest struct {
+	Name string `json:"name"`
+}
+
 type RegisterRequest struct {
 	Email       string `json:"email"`
 	Username    string `json:"username"`
@@ -183,7 +187,6 @@ func (c *AuthController) ResendVerificationEmail(ctx *fiber.Ctx) error {
 
 	err := c.authService.ResendVerification(req.Email)
 	if err != nil {
-		// ส่ง Error ที่ service สร้างไว้ (เช่น "อีเมลนี้ถูกยืนยันตัวตนไปแล้ว")
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
@@ -257,4 +260,25 @@ func (ctl *AuthController) VerifyEmailToken(c *fiber.Ctx) error {
 	ctl.tokenRepo.Delete(tokenData.ID)
 
 	return c.JSON(fiber.Map{"message": "Email verified successfully"})
+}
+
+func (c *AuthController) GuestLogin(ctx *fiber.Ctx) error {
+	var req GuestLoginRequest
+
+	if err := ctx.BodyParser(&req); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
+	}
+
+	guestUser := entity.User{
+		ID:       0,
+		Username: req.Name,
+		Role:     "guest",
+	}
+
+	token, err := c.authService.GenerateToken(guestUser)
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not generate token"})
+	}
+
+	return ctx.JSON(fiber.Map{"token": token})
 }
