@@ -64,7 +64,12 @@ func (a *App) Init() {
 }
 
 func (a *App) setUpHttp() {
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		EnableTrustedProxyCheck: true,
+		TrustedProxies:          []string{"0.0.0.0/0"},
+		ProxyHeader:             "X-Forwarded-For",
+	})
+
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     "https://correct-quiz-project.vercel.app, http://localhost:5173",
 		AllowHeaders:     "Origin, Content-Type, Accept,Authorization",
