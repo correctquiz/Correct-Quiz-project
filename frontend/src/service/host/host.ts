@@ -33,7 +33,6 @@ class HostGame {
 
     constructor() {
         this.net = new NetService();
-        this.net.connect();
         this.net.onPacket(p => this.onPacket(p));
     }
 

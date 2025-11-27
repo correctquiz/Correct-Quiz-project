@@ -150,9 +150,8 @@ export class PlayerGame {
             }
             }
         }catch (e) {
-                // 3. ถ้าพัง ให้ปริ้น Error ออกมาให้เห็นจะๆ
                 console.error("FATAL GAME STORE CRASH:", e);
-                this.net.disconnect(); // ปิดสายอย่างสุภาพ
+                this.net.disconnect(); 
                 alert("เกิดข้อผิดพลาดร้ายแรงระหว่างเข้าร่วมเกม");
             }
     }
