@@ -81,7 +81,7 @@
                     `${BASE_URL}/api/auth/guest-login`,
                     {
                         method: "POST",
-                        headers: getHeaders(),
+                        headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ name: name }),
                     },
                 );
@@ -91,9 +91,18 @@
 
                 const guestData = await guestResponse.json();
                 token = guestData.token;
-
                 localStorage.setItem("jwt_token", token);
             }
+            userStore.set({
+                loggedIn: true,
+                userType: "Player",
+                user: {
+                    uid: "guest",
+                    email: "",
+                    displayName: name,
+                    emailVerified: true,
+                } as any,
+            });
 
             const pinCheckResponse = await fetch(`${BASE_URL}/api/game/check`, {
                 method: "POST",
