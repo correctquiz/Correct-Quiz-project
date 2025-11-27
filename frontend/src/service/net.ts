@@ -121,7 +121,7 @@ export class NetService {
     constructor() {
         console.log("DEBUG: NetService initialized. Waiting for connect() call.");
     }
-    
+
 
     connect(token: string) {
         let baseUrl = (import.meta as any).env.VITE_WS_URL || "ws://localhost:3000/ws";
@@ -202,7 +202,5 @@ export class NetService {
             console.log("⏳ Socket not ready. Queuing packet:", packet.id);
             this.pendingQueue.push(mergedArray);
         }
-
-        this.webSocket.send(mergedArray);
     }
 }
