@@ -93,7 +93,9 @@ export class PlayerGame {
     onPacket(packet: Packet) {
         switch (packet.id) {
             case PacketTypes.PlayerJoin: {
+                console.log("DEBUG: PlayerJoin Packet Received!");
                 let data = packet as PlayerJoinPacket;
+                console.log("DEBUG: Player Data:", data.player);
                 currentPlayer.set(data.player);
                 if (this.navigate) {
                     this.navigate('/play');
