@@ -7,6 +7,7 @@ import (
 	"CorrectQuiz.com/quiz/internal/service"
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
+	gorilla "github.com/gorilla/websocket"
 )
 
 const (
@@ -60,7 +61,11 @@ func (c WebsocketController) Ws(con *websocket.Conn) {
 
 	for {
 		if mt, msg, err = con.ReadMessage(); err != nil {
-			log.Printf("🚨 WS DISCONNECT ERROR: %v", err)
+			if gorilla.IsCloseError(err) {
+				log.Printf("🚨 WS DISCONNECT REASON: Code %d", err.(*gorilla.CloseError).Code)
+			} else {
+				log.Printf("🚨 WS UNHANDLED ERROR: %v", err)
+			}
 			if !websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseNormalClosure) {
 			}
 
