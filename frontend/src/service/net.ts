@@ -112,6 +112,7 @@ export class NetService {
     private webSocket!: WebSocket;
     private textDecoder: TextDecoder = new TextDecoder();
     private textEncoder: TextEncoder = new TextEncoder();
+    private pendingQueue: Uint8Array[] = [];
 
     private onPacketCallback?: (packet: any) => void;
     public onDisconnectCallback?: (code: number, reason: string) => void
@@ -125,7 +126,13 @@ export class NetService {
         this.webSocket = new WebSocket(WS_URL);
         this.webSocket.onopen = () => {
             console.log("opened connection");
-            this.sendPacket({ id: -1 } as any);
+            while (this.pendingQueue.length > 0) {
+                const data = this.pendingQueue.shift();
+                if (data) {
+                    console.log("🚀 Sending queued packet...");
+                    this.webSocket.send(data);
+                }
+            }
         };
 
         this.webSocket.onmessage = async (event: MessageEvent) => {
@@ -183,6 +190,13 @@ export class NetService {
         );
         mergedArray.set(packetIdArray);
         mergedArray.set(packetDataArray, packetIdArray.length);
+
+        if (this.webSocket && this.webSocket.readyState === WebSocket.OPEN) {
+            this.webSocket.send(mergedArray);
+        } else {
+            console.log("⏳ Socket not ready. Queuing packet:", packet.id);
+            this.pendingQueue.push(mergedArray); 
+        }
 
         this.webSocket.send(mergedArray);
     }
