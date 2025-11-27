@@ -178,10 +178,6 @@ export class NetService {
     }
 
     sendPacket(packet: Packet) {
-        if (!this.webSocket || this.webSocket.readyState !== WebSocket.OPEN) {
-            console.warn("⚠️ Socket not ready. Skipping packet:", packet.id);
-            return;
-        }
         const packetId = packet.id;
         const packetData = JSON.stringify(packet, (key, value) =>
             key == "id" ? undefined : value
