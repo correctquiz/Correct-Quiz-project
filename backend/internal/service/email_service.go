@@ -37,20 +37,6 @@ func NewBrevoEmailService() EmailServiceInterface {
 }
 
 func (s *BrevoEmailService) SendEmail(toEmail, toName, subject, htmlContent string) error {
-	fmt.Println("========================================")
-	fmt.Println("⚡️ DEBUG: ATTEMPTING TO SEND EMAIL")
-	fmt.Printf("📧 To: %s\n", toEmail)
-
-	keyLen := len(s.apiKey)
-	fmt.Printf("🔑 API Key Length: %d\n", keyLen)
-
-	if keyLen > 10 {
-		fmt.Printf("🔑 Key Start: '%s' (Check for spaces!)\n", s.apiKey[:5])
-		fmt.Printf("🔑 Key End:   '%s' (Check for spaces!)\n", s.apiKey[keyLen-5:])
-	} else {
-		fmt.Println("❌ API Key seems too short or empty!")
-	}
-	fmt.Println("========================================")
 
 	if s.apiKey == "" {
 		return fmt.Errorf("cannot send email: Brevo API key is not configured")
