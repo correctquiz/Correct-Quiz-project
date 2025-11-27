@@ -72,7 +72,7 @@ func (c WebsocketController) Ws(con *websocket.Conn) {
 			c.netService.OnDisconnect(con)
 			break
 		}
-
+		log.Printf("✅ [Backend] Received Message! Type: %d, Size: %d", mt, len(msg))
 		c.netService.OnIncomingMessage(con, mt, msg)
 	}
 }
