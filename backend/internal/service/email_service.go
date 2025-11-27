@@ -20,6 +20,12 @@ type BrevoEmailService struct {
 
 func NewBrevoEmailService() EmailServiceInterface {
 	apiKey := os.Getenv("BREVO_API_KEY")
+	if len(apiKey) > 10 {
+		log.Printf("DEBUG: API Key detected! Length: %d, Starts with: %s...", len(apiKey), apiKey[:8])
+	} else {
+		log.Println("DEBUG: API Key is MISSING or TOO SHORT!")
+	}
+
 	if apiKey == "" {
 		log.Println("WARNING: BREVO_API_KEY is not set. Emails will not be sent.")
 	}
