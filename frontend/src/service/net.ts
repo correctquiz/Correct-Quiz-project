@@ -117,8 +117,7 @@ export class NetService {
     public onDisconnectCallback?: (code: number, reason: string) => void
 
 
-    connect() {
-        const token = localStorage.getItem("jwt_token");
+    connect(token: string) {
         let baseUrl = (import.meta as any).env.VITE_WS_URL || "ws://localhost:3000/ws";
         const WS_URL = `${baseUrl}?token=${token}`;
         console.log("📢 WS URL is:", WS_URL);

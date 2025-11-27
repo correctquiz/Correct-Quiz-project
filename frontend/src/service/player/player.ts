@@ -34,7 +34,6 @@ export class PlayerGame {
     constructor(navigateFunction?: (path: string) => void) {
         console.trace("Created from here:");
         this.net = new NetService();
-        this.net.connect();
         this.net.onPacket(p => this.onPacket(p));
         this.net.onDisconnect((code, reason) => this.handleDisconnect(code, reason));
         if (navigateFunction) {
@@ -50,7 +49,8 @@ export class PlayerGame {
         resetPlayerStores()
     }
 
-    join(code: string, name: string) {
+    join(code: string, name: string, token: string) {
+        this.net.connect(token);
         let packet: ConnectPacket = {
             id: PacketTypes.Connect,
             code: code,
