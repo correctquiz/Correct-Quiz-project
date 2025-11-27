@@ -126,7 +126,7 @@ func (c *AuthController) Register(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to create verification token"})
 	}
 
-	verificationLink := fmt.Sprintf("http://localhost:5173/#/verify-email?token=%s", tokenString)
+	verificationLink := fmt.Sprintf("https://correct-quiz-project.vercel.app/#/verify-email?token=%s", tokenString)
 	htmlContent := fmt.Sprintf(
 		`<strong>ยินดีต้อนรับสู่ Correct Quiz!</strong>
          <p>กรุณาคลิกลิงก์ด้านล่างเพื่อยืนยันอีเมลของคุณ (ลิงก์นี้จะหมดอายุใน 5 นาที):</p>
