@@ -12,9 +12,14 @@
   import ForgotPassword from "./views/Auth/ForgotPassword.svelte";
   import { wrap } from "svelte-spa-router/wrap";
   import HostView from "./views/host/HostView.svelte";
-  import { tick } from "svelte";
+  import { onMount, tick } from "svelte";
   import VerifyEmailPage from "./views/Auth/VerifyEmailPage.svelte";
   import { get } from "svelte/store";
+    import { initializePlayerGame } from "./service/gameStore";
+
+  onMount(() => {
+        initializePlayerGame(push);
+    });
 
   $: {
     (async () => {
