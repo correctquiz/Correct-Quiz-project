@@ -341,6 +341,7 @@ func (g *Game) BroadcastPacket(packet any, includeHost bool) error {
 }
 
 func (g *Game) OnPlayerJoin(name string, connection *websocket.Conn) {
+	log.Printf("👤 OnPlayerJoin called for: %s (Game: %s)", name, g.Code)
 	player := Player{
 		Id:            uuid.New(),
 		Name:          name,
@@ -363,6 +364,7 @@ func (g *Game) OnPlayerJoin(name string, connection *websocket.Conn) {
 	g.netService.SendPacket(connection, PlayerJoinPacket{
 		Player: player,
 	})
+	log.Println("✅ Player Joined Successfully!")
 }
 
 func (g *Game) KickPlayer(playerID string) error {
