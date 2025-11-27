@@ -14,15 +14,15 @@
   import HostView from "./views/host/HostView.svelte";
   import { tick } from "svelte";
   import VerifyEmailPage from "./views/Auth/VerifyEmailPage.svelte";
-    import { get } from "svelte/store";
+  import { get } from "svelte/store";
 
   $: {
     (async () => {
       await tick();
 
       if (get(isLoggingOut)) {
-        isLoggingOut.set(false); 
-        return; 
+        isLoggingOut.set(false);
+        return;
       }
 
       const store = $userStore;
@@ -71,8 +71,14 @@
   let routes = {
     "/": PlayerJoinView,
     "/play": PlayerView,
-    "/player/login": PlayerLogin,
-    "/player/signup": PlayerSignup,
+    "/player/login": wrap({
+      component: PlayerLogin,
+      props: { userType: "Player" }, 
+    }),
+    "/player/signup": wrap({
+      component: PlayerSignup,
+      props: { userType: "Player" }, 
+    }),
     "/host": HostQuizListView,
     "/host/game": HostView,
     "/host/login": HostLogin,
