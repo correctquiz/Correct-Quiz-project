@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"log"
 	"time"
 
 	"CorrectQuiz.com/quiz/internal/service"
@@ -59,6 +60,7 @@ func (c WebsocketController) Ws(con *websocket.Conn) {
 
 	for {
 		if mt, msg, err = con.ReadMessage(); err != nil {
+			log.Printf("🚨 WS DISCONNECT ERROR: %v", err)
 			if !websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseNormalClosure) {
 			}
 
