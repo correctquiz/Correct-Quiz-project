@@ -31,9 +31,12 @@ class HostGame {
 
     public navigate: ((path: string) => void) | undefined;
 
-    constructor() {
+    constructor(navigateFunction?: (path: string) => void) {
         this.net = new NetService();
         this.net.onPacket(p => this.onPacket(p));
+        if (navigateFunction) {
+            this.navigate = navigateFunction;
+        }
     }
 
     hostQuiz(quizId: string) {
@@ -42,6 +45,11 @@ class HostGame {
             quizId: quizId,
         }
         this.net.sendPacket(packet);
+    }
+
+    connect(token: string) {
+        console.log("Host connecting with token...");
+        this.net.connect(token);
     }
 
     public unhost(options: { broadcastEnd?: boolean } = { broadcastEnd: true }) {
