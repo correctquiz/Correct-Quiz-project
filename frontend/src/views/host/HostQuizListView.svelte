@@ -5,11 +5,12 @@
     import { location, push } from "svelte-spa-router";
     import Button from "../../lib/Button.svelte";
     import { logout, userStore, isLoggingOut } from "../../service/userStore";
-    import { game } from "../../service/host/host";
+    // 1. Correct Import (Once)
+    import { hostGameStore, initializeHostGame } from "../../service/gameStore";
+    import { get } from "svelte/store";
 
     let quizzes: Quiz[] = [];
     let isLoading = true;
-    game.navigate = push;
 
     async function handleHostLogout() {
         isLoggingOut.set(true);
@@ -17,9 +18,42 @@
         await logout();
     }
 
-    function onHost(event: { detail: Quiz }) {
-        const quizIdString = String(event.detail.id);
-        game.hostQuiz(quizIdString);
+    // 2. Define the onQuizHost function properly
+    async function onQuizHost(event: { detail: Quiz }) {
+        const quizToHost = event.detail;
+
+        if (quizToHost.questions.length < 1) {
+            return;
+        }
+
+        try {
+            // A. Initialize HostGame if needed
+            initializeHostGame(push);
+
+            // B. Get the game instance from the store
+            const game = get(hostGameStore);
+
+            if (game) {
+                // C. Connect with token
+                const token = localStorage.getItem("jwt_token");
+                if (token) {
+                    game.connect(token);
+
+                    // D. Wait briefly for connection, then host
+                    setTimeout(() => {
+                        game.hostQuiz(String(quizToHost.id));
+                        push("/host/game");
+                    }, 500);
+                } else {
+                    alert("No authentication token found. Please login again.");
+                }
+            } else {
+                alert("Failed to initialize game service.");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Could not start hosting the game.");
+        }
     }
 
     async function loadQuizzes() {
@@ -34,22 +68,6 @@
         }
     }
 
-    async function onQuizHost(event: { detail: Quiz }) {
-        const quizToHost = event.detail;
-
-        if (quizToHost.questions.length < 1) {
-            return;
-        }
-
-        try {
-            await game.hostQuiz(String(quizToHost.id));
-
-            push("/host/game");
-        } catch (error) {
-            alert("Could not start hosting the game.");
-        }
-    }
-
     async function createNewQuiz() {
         const newQuizName = prompt("กรุณาตั้งชื่อ ชุดคำถาม:", "New Quiz");
         if (newQuizName) {
@@ -59,6 +77,7 @@
             }
         }
     }
+
     async function onQuizDelete(event: { detail: Quiz }) {
         const quizToDelete = event.detail;
         const confirmed = confirm(
