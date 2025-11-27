@@ -350,7 +350,7 @@ func (g *Game) OnPlayerJoin(name string, connection *websocket.Conn) {
 		CorrectStreak: 0,
 	}
 	g.AddPlayer(&player)
-
+	log.Println("📤 Sending PlayerJoinPacket to everyone...")
 	g.playersMutex.RLock()
 	hostConnection := g.Host
 	g.playersMutex.RUnlock()
