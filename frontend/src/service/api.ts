@@ -4,7 +4,7 @@ interface RegisterError {
     errorStatus: number;
 }
 
-function getHeaders() {
+export function getHeaders() {
     const token = localStorage.getItem("jwt_token");
     return {
         'Content-Type': 'application/json',
