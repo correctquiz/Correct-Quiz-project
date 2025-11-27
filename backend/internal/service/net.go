@@ -323,6 +323,8 @@ func (c *NetService) handlePlayerLeave(con *websocket.Conn, playerId uuid.UUID) 
 
 func (c *NetService) OnIncomingMessage(con *websocket.Conn, mt int, msg []byte) {
 
+	fmt.Printf("📦 [Backend] OnIncomingMessage: Type=%d Len=%d\n", mt, len(msg))
+
 	if len(msg) < 2 {
 		return
 	}
@@ -332,14 +334,17 @@ func (c *NetService) OnIncomingMessage(con *websocket.Conn, mt int, msg []byte) 
 
 	packet := c.packetIdtoPacket(packetId)
 	if packet == nil {
+		fmt.Printf("❌ Unknown Packet ID: %d\n", packetId)
 		return
 	}
 
 	err := json.Unmarshal(data, packet)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("❌ Unmarshal Error:", err)
 		return
 	}
+
+	fmt.Printf("👉 Processing Packet ID: %d (%T)\n", packetId, packet)
 
 	switch data := packet.(type) {
 	case *ConnectPacket:
@@ -354,21 +359,23 @@ func (c *NetService) OnIncomingMessage(con *websocket.Conn, mt int, msg []byte) 
 
 	case *HostGamePacket:
 		{
+			fmt.Println("🏠 HostGame Request received!")
 
 			id64, err := strconv.ParseUint(data.QuizId, 10, 64)
 			if err != nil {
+				fmt.Println("❌ Invalid Quiz ID:", err)
 				return
 			}
 			quizId := uint(id64)
 
 			quiz, err := c.quizService.GetQuizById(quizId)
 			if err != nil {
-				fmt.Println(err)
+				fmt.Println("❌ DB Error:", err)
 				return
 			}
 
 			if quiz == nil {
-				fmt.Println("Quiz not found (ID:", quizId, ")")
+				fmt.Println("❌ Quiz not found (ID:", quizId, ")")
 				return
 			}
 
@@ -385,16 +392,20 @@ func (c *NetService) OnIncomingMessage(con *websocket.Conn, mt int, msg []byte) 
 				State: game.State,
 				Code:  game.Code,
 			})
+			fmt.Println("✅ Game Room Created:", game.Code)
 			break
 		}
 
 	case *StartGamePacket:
 		{
+			fmt.Println("🚀 StartGame Request received!")
 			game := c.GetGameByHost(con)
 			if game == nil {
+				fmt.Println("❌ Game not found for this host")
 				return
 			}
 			game.Start()
+			fmt.Println("✅ Game Started!")
 			break
 		}
 	case *KickPlayerPacket:
