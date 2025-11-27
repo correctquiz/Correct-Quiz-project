@@ -175,6 +175,10 @@ func (c *AuthController) Login(ctx *fiber.Ctx) error {
 
 	sessionID := sess.ID()
 
+	fmt.Println("------------------------------------------------")
+	fmt.Printf("DEBUG: Session ID is [%s]\n", sessionID)
+	fmt.Println("------------------------------------------------")
+
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Login successful",
 		"token":   sessionID,
