@@ -2,68 +2,49 @@ package middleware
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 var Store *session.Store
 
 func Protected() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-
-		var tokenString string
 		authHeader := c.Get("Authorization")
+		if authHeader == "" {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Missing Token"})
+		}
 
-		if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
+		tokenString := ""
+		if len(authHeader) > 7 && strings.HasPrefix(authHeader, "Bearer ") {
 			tokenString = authHeader[7:]
-		} else {
-			tokenString = c.Cookies("quiz_session")
 		}
 
 		if tokenString == "" {
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid Token Format"})
 		}
 
-		sess, err := Store.Get(c)
-		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": "ไม่สามารถดึงข้อมูล session",
-			})
-		}
-
-		userIDRaw := sess.Get("user_id")
-		if userIDRaw == nil {
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-				"error": "ไม่ได้รับอนุญาต: ยังไม่ได้ล็อกอิน",
-			})
-		}
-
-		var userID uint
-		var ok bool
-
-		switch id := userIDRaw.(type) {
-		case uint:
-			userID = id
-			ok = true
-		case float64:
-			if id > 0 {
-				userID = uint(id)
-				ok = true
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 			}
-		case int:
-			if id > 0 {
-				userID = uint(id)
-				ok = true
-			}
+			return []byte("my_super_secret_key_12345"), nil
+		})
+
+		if err != nil || !token.Valid {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid or Expired Token"})
 		}
 
-		if !ok || userID == 0 {
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-				"error": fmt.Sprintf("ไม่ได้รับอนุญาต: User ID เสียหาย (Type: %T)", userIDRaw),
-			})
+		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+			if userIDFloat, ok := claims["user_id"].(float64); ok {
+				c.Locals("user_id", uint(userIDFloat))
+			}
+		} else {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid Claims"})
 		}
-		c.Locals("user_id", userID)
 
 		return c.Next()
 	}

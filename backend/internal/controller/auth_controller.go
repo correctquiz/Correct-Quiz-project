@@ -13,6 +13,7 @@ import (
 	"CorrectQuiz.com/quiz/internal/service"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )
 
@@ -148,7 +149,6 @@ func (c *AuthController) Register(ctx *fiber.Ctx) error {
 }
 
 func (c *AuthController) Login(ctx *fiber.Ctx) error {
-
 	var req LoginRequest
 	if err := ctx.BodyParser(&req); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse body"})
@@ -159,26 +159,23 @@ func (c *AuthController) Login(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid credentials or token"})
 	}
 
-	sess, err := c.sessionStore.Get(ctx)
+	claims := jwt.MapClaims{
+		"user_id":  user.ID,
+		"username": user.Username,
+		"role":     user.Role,
+		"exp":      time.Now().Add(time.Hour * 72).Unix(),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	t, err := token.SignedString([]byte("my_super_secret_key_12345"))
 	if err != nil {
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Session error"})
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not login"})
 	}
-
-	sess.Set("user_id", user.ID)
-
-	if err := sess.Save(); err != nil {
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Session save error"})
-	}
-
-	sessionID := sess.ID()
-
-	fmt.Println("------------------------------------------------")
-	fmt.Printf("DEBUG: Session ID is [%s]\n", sessionID)
-	fmt.Println("------------------------------------------------")
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Login successful",
-		"token":   sessionID,
+		"token":   t,
 	})
 }
 
