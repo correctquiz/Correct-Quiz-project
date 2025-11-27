@@ -99,7 +99,7 @@ export class PlayerGame {
                 console.log("DEBUG: Player Data:", data.player);
                 currentPlayer.set(data.player);
                 if (this.navigate) {
-                    this.navigate('/play');
+                    this.navigate('/');
                 }
                 break;
             }
