@@ -81,7 +81,7 @@
                     `${BASE_URL}/api/auth/guest-login`,
                     {
                         method: "POST",
-                        headers: { "Content-Type": "application/json" },
+                        headers: getHeaders(),
                         body: JSON.stringify({ name: name }),
                     },
                 );
