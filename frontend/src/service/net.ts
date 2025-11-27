@@ -112,11 +112,16 @@ export class NetService {
     private webSocket!: WebSocket;
     private textDecoder: TextDecoder = new TextDecoder();
     private textEncoder: TextEncoder = new TextEncoder();
-    private pendingQueue: Uint8Array[] = [];
 
     private onPacketCallback?: (packet: any) => void;
     public onDisconnectCallback?: (code: number, reason: string) => void
 
+    private pendingQueue: Uint8Array[] = [];
+
+    constructor() {
+        console.log("DEBUG: NetService initialized. Waiting for connect() call.");
+    }
+    
 
     connect(token: string) {
         let baseUrl = (import.meta as any).env.VITE_WS_URL || "ws://localhost:3000/ws";
@@ -195,7 +200,7 @@ export class NetService {
             this.webSocket.send(mergedArray);
         } else {
             console.log("⏳ Socket not ready. Queuing packet:", packet.id);
-            this.pendingQueue.push(mergedArray); 
+            this.pendingQueue.push(mergedArray);
         }
 
         this.webSocket.send(mergedArray);
