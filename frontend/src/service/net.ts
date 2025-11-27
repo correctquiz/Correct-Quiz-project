@@ -193,6 +193,7 @@ export class NetService {
         mergedArray.set(packetDataArray, packetIdArray.length);
 
         if (this.webSocket && this.webSocket.readyState === WebSocket.OPEN) {
+            console.log(`🚀 [Frontend] Sending Packet ID: ${packet.id}`);
             this.webSocket.send(mergedArray);
         } else {
             console.log("⏳ Socket not ready. Queuing packet:", packet.id);
