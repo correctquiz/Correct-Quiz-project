@@ -118,10 +118,6 @@ export class NetService {
 
 
     connect(token: string) {
-        if (!token || token === "undefined" || token === "null") {
-            console.warn("🚫 NetService: หยุดการเชื่อมต่อเพราะไม่มี Token");
-            return; 
-        }
         let baseUrl = (import.meta as any).env.VITE_WS_URL || "ws://localhost:3000/ws";
         const WS_URL = `${baseUrl}?token=${token}`;
         console.log("📢 WS URL is:", WS_URL);
@@ -129,6 +125,7 @@ export class NetService {
         this.webSocket = new WebSocket(WS_URL);
         this.webSocket.onopen = () => {
             console.log("opened connection");
+            this.sendPacket({ id: -1 } as any);
         };
 
         this.webSocket.onmessage = async (event: MessageEvent) => {

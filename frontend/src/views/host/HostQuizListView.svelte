@@ -5,7 +5,6 @@
     import { location, push } from "svelte-spa-router";
     import Button from "../../lib/Button.svelte";
     import { logout, userStore, isLoggingOut } from "../../service/userStore";
-    // 1. Correct Import (Once)
     import { hostGameStore, initializeHostGame } from "../../service/gameStore";
     import { get } from "svelte/store";
 
@@ -18,7 +17,6 @@
         await logout();
     }
 
-    // 2. Define the onQuizHost function properly
     async function onQuizHost(event: { detail: Quiz }) {
         const quizToHost = event.detail;
 
@@ -27,19 +25,16 @@
         }
 
         try {
-            // A. Initialize HostGame if needed
+
             initializeHostGame(push);
 
-            // B. Get the game instance from the store
             const game = get(hostGameStore);
 
             if (game) {
-                // C. Connect with token
                 const token = localStorage.getItem("jwt_token");
                 if (token) {
                     game.connect(token);
 
-                    // D. Wait briefly for connection, then host
                     setTimeout(() => {
                         game.hostQuiz(String(quizToHost.id));
                         push("/host/game");
