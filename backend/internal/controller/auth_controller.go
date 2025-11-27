@@ -173,9 +173,11 @@ func (c *AuthController) Login(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Session save error"})
 	}
 
+	sessionID := sess.ID()
+
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Login successful",
-		"token":   "sessionID",
+		"token":   sessionID,
 	})
 }
 
