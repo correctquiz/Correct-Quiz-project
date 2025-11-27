@@ -164,16 +164,18 @@ func (c *AuthController) Login(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Session error"})
 	}
 
+	if err := sess.Regenerate(); err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Session regenerate error"})
+	}
+
 	sess.Set("user_id", user.ID)
 	if err := sess.Save(); err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Session save error"})
 	}
 
-	sessionID := sess.ID()
-
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Login successful",
-		"token":   sessionID,
+		"token":   "sessionID",
 	})
 }
 
