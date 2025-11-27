@@ -33,7 +33,6 @@
             if (game) {
                 const token = localStorage.getItem("jwt_token");
                 if (token) {
-                    game.connect(token);
 
                     setTimeout(() => {
                         game.hostQuiz(String(quizToHost.id));
