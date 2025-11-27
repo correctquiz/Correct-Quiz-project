@@ -4,6 +4,7 @@
     import { playerGameStore } from "../../service/gameStore";
     import { push, querystring } from "svelte-spa-router";
     import { BASE_URL } from "../../service/api";
+    import { getHeaders } from "../../service/api";
 
     let code: string = "";
     let name: string = "";
@@ -108,7 +109,7 @@
                 `${BASE_URL}/api/game/check-name`,
                 {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: getHeaders(),
                     body: JSON.stringify({ code: code, name: name }),
                 },
             );
@@ -118,7 +119,7 @@
                 throw new Error("Error checking name");
             }
 
-            $playerGameStore.join(code, name);
+            $playerGameStore.join(code, name, token);
         } catch (error: any) {
             if (error.message === "Invalid game PIN") {
                 joinError = "รหัส PIN ของเกมไม่ถูกต้อง กรุณาลองใหม่";
