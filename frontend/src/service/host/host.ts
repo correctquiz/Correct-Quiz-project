@@ -67,6 +67,7 @@ class HostGame {
 
 
     start() {
+        console.log("🚀 Host clicking START...");
         this.net.sendPacket({ id: PacketTypes.StartGame });
     }
 
