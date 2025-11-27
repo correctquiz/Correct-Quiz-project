@@ -91,6 +91,7 @@ export class PlayerGame {
 
 
     onPacket(packet: Packet) {
+        try{
         switch (packet.id) {
             case PacketTypes.PlayerJoin: {
                 console.log("DEBUG: PlayerJoin Packet Received!");
@@ -147,7 +148,13 @@ export class PlayerGame {
                 rank.set(data.rank);
                 break;
             }
-        }
+            }
+        }catch (e) {
+                // 3. ถ้าพัง ให้ปริ้น Error ออกมาให้เห็นจะๆ
+                console.error("FATAL GAME STORE CRASH:", e);
+                this.net.disconnect(); // ปิดสายอย่างสุภาพ
+                alert("เกิดข้อผิดพลาดร้ายแรงระหว่างเข้าร่วมเกม");
+            }
     }
 }
 
