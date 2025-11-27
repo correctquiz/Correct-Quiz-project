@@ -97,7 +97,7 @@
 
             const pinCheckResponse = await fetch(`${BASE_URL}/api/game/check`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: getHeaders(),
                 body: JSON.stringify({ code: code }),
             });
             if (!pinCheckResponse.ok) {
