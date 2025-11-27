@@ -1,9 +1,17 @@
 package controller
 
 import (
+	"time"
+
 	"CorrectQuiz.com/quiz/internal/service"
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
+)
+
+const (
+	writeWait  = 10 * time.Second
+	pongWait   = 60 * time.Second
+	pingPeriod = (pongWait * 9) / 10
 )
 
 type WebsocketController struct {
@@ -22,21 +30,43 @@ func Ws(netService *service.NetService) WebsocketController {
 }
 
 func (c WebsocketController) Ws(con *websocket.Conn) {
+	go func() {
+		ticker := time.NewTicker(pingPeriod)
+		defer func() {
+			ticker.Stop()
+			con.Close()
+		}()
+		for {
+			<-ticker.C
+			if err := con.WriteMessage(websocket.PingMessage, nil); err != nil {
+				return
+			}
+		}
+	}()
+
 	var (
 		mt  int
 		msg []byte
 		err error
 	)
+
+	con.SetReadDeadline(time.Now().Add(pongWait))
+
+	con.SetPongHandler(func(appData string) error {
+		con.SetReadDeadline(time.Now().Add(pongWait))
+		return nil
+	})
+
 	for {
 		if mt, msg, err = con.ReadMessage(); err != nil {
-			if err != nil {
-				break
+			if !websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseNormalClosure) {
 			}
+
 			c.netService.OnDisconnect(con)
 			break
 		}
-		c.netService.OnIncomingMessage(con, mt, msg)
 
+		c.netService.OnIncomingMessage(con, mt, msg)
 	}
 }
 
