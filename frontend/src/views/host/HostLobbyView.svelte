@@ -18,6 +18,7 @@
 
     function start() {
         const game = get(hostGameStore);
+        game.start();
     }
 
     function handleKick(event: CustomEvent<string>) {
