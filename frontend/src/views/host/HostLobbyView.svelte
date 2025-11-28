@@ -4,6 +4,7 @@
     import { gameCode, game, players } from "../../service/host/host";
     import QRCode from "svelte-qrcode";
     import { push } from "svelte-spa-router";
+    import { hostGameStore } from "../../service/gameStore";
 
     game.navigate = push;
 
@@ -15,7 +16,13 @@
     }
 
     function start() {
-        game.start();
+        const game = get(hostGameStore);
+        if (game) {
+            console.log("🚀 Host clicking START..."); 
+            game.start();
+        } else {
+            console.error("❌ Game instance not found in store!");
+        }
     }
 
     function handleKick(event: CustomEvent<string>) {
