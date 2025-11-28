@@ -5,18 +5,22 @@
     import {
         leaderboard,
         gameCode,
-        game,
         isHostNavigating,
     } from "../../service/host/host";
     import { BASE_URL } from "../../service/api";
     import { onDestroy } from "svelte";
+    import { hostGameStore } from "../../service/gameStore";
+    import { get } from "svelte/store";
 
     let isNavigatingBack = false;
 
     function goBack() {
         isNavigatingBack = true;
         isHostNavigating.set(true);
-        game.unhost({ broadcastEnd: false });
+        const currentGame = get(hostGameStore);
+        if (currentGame) {
+            currentGame.unhost({ broadcastEnd: false });
+        }
         push("/host");
     }
 
@@ -32,7 +36,10 @@
 
     onDestroy(() => {
         if (!isNavigatingBack) {
-            game.unhost();
+            const currentGame = get(hostGameStore);
+            if (currentGame) {
+                currentGame.unhost();
+            }
         }
     });
 </script>

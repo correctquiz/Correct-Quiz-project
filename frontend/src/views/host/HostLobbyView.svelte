@@ -18,12 +18,6 @@
 
     function start() {
         const game = get(hostGameStore);
-        if (game) {
-            console.log("🚀 Host clicking START..."); 
-            game.start();
-        } else {
-            console.error("❌ Game instance not found in store!");
-        }
     }
 
     function handleKick(event: CustomEvent<string>) {
