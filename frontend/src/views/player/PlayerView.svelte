@@ -4,7 +4,9 @@
     import PlayerLobbyView from "./PlayerLobbyView.svelte";
     import PlayerEndView from "./PlayerEndView.svelte";
     import { onDestroy } from 'svelte';
-    import { state as gameStateStore ,game} from '../../service/player/player';
+    import { state as gameStateStore} from '../../service/player/player';
+    import {playerGameStore } from '../../service/gameStore';
+    import { get } from "svelte/store";
 
     let views: Record<GameState,any>={
         [GameState.Lobby]: PlayerLobbyView,
@@ -16,7 +18,10 @@
     }
 
     onDestroy(() => {
-        game.signalPlayerLeaving();
+        const game = get(playerGameStore);
+        if (game) {
+            game.signalPlayerLeaving();
+        }
     });
 
 </script>
