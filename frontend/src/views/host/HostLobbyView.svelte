@@ -5,6 +5,7 @@
     import QRCode from "svelte-qrcode";
     import { push } from "svelte-spa-router";
     import { hostGameStore } from "../../service/gameStore";
+    import { get } from "svelte/store";
 
     game.navigate = push;
 
